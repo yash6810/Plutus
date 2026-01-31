@@ -1,0 +1,24 @@
+# Render.com deployment configuration
+# https://render.com/docs/deploy-fastapi
+
+services:
+  - type: web
+    name: plutus-agent
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn api.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: GEMINI_API_KEY
+        sync: false  # Set manually in Render dashboard
+      - key: API_SECRET_KEY
+        generateValue: true
+      - key: GUVI_CALLBACK_ENABLED
+        value: false
+      - key: AI_MODEL_NAME
+        value: gemini-2.0-flash
+      - key: MAX_CONVERSATION_TURNS
+        value: 20
+      - key: MIN_INTELLIGENCE_THRESHOLD
+        value: 2
+      - key: SCAM_CONFIDENCE_THRESHOLD
+        value: 0.7

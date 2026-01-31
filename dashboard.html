@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plutus - Scam Detection Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0f0f23;
+            --bg-secondary: #1a1a2e;
+            --bg-card: #16213e;
+            --accent-primary: #00d4ff;
+            --accent-secondary: #7b2cbf;
+            --accent-warning: #ff6b35;
+            --accent-success: #00ff88;
+            --accent-danger: #ff3366;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0b0;
+            --border-color: #2a2a4a;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            background:
+                radial-gradient(ellipse at 20% 80%, rgba(123, 44, 191, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(0, 212, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(0, 255, 136, 0.05) 0%, transparent 60%);
+        }
+
+        /* Header */
+        .header {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1600px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .logo h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--glass-bg);
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--accent-danger);
+            animation: pulse 2s infinite;
+        }
+
+        .status-dot.connected {
+            background: var(--accent-success);
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        /* Main container */
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 2rem;
+        }
+
+        /* Chat section */
+        .chat-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-title .icon {
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        /* Chat messages */
+        .chat-container {
+            height: 500px;
+            overflow-y: auto;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .chat-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-container::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 3px;
+        }
+
+        .message {
+            max-width: 85%;
+            padding: 1rem 1.25rem;
+            border-radius: 16px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.scammer {
+            align-self: flex-start;
+            background: linear-gradient(135deg, rgba(255, 51, 102, 0.2), rgba(255, 107, 53, 0.1));
+            border: 1px solid rgba(255, 51, 102, 0.3);
+        }
+
+        .message.agent {
+            align-self: flex-end;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(123, 44, 191, 0.1));
+            border: 1px solid rgba(0, 212, 255, 0.3);
+        }
+
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 0.75rem;
+        }
+
+        .message-sender {
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .message.scammer .message-sender {
+            color: var(--accent-danger);
+        }
+
+        .message.agent .message-sender {
+            color: var(--accent-primary);
+        }
+
+        .message-time {
+            color: var(--text-secondary);
+        }
+
+        .message-text {
+            line-height: 1.5;
+        }
+
+        /* Input area */
+        .input-area {
+            padding: 1.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .input-row {
+            display: flex;
+            gap: 12px;
+        }
+
+        .input-wrapper {
+            flex: 1;
+            position: relative;
+        }
+
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        textarea {
+            resize: none;
+            height: 60px;
+        }
+
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.3);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: var(--glass-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border-color);
+        }
+
+        /* Config panel */
+        .config-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .config-group {
+            padding: 1.5rem;
+        }
+
+        .config-label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        /* Intelligence panel */
+        .intel-grid {
+            display: grid;
+            gap: 12px;
+            padding: 1.5rem;
+        }
+
+        .intel-item {
+            background: var(--glass-bg);
+            border-radius: 10px;
+            padding: 12px 16px;
+            border: 1px solid var(--border-color);
+        }
+
+        .intel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .intel-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+        }
+
+        .intel-count {
+            background: var(--accent-primary);
+            color: var(--bg-primary);
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+
+        .intel-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .intel-tag {
+            background: var(--bg-secondary);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-family: 'Consolas', monospace;
+            color: var(--accent-success);
+            border: 1px solid rgba(0, 255, 136, 0.2);
+        }
+
+        .intel-tag.upi {
+            color: var(--accent-primary);
+            border-color: rgba(0, 212, 255, 0.2);
+        }
+
+        .intel-tag.phone {
+            color: var(--accent-warning);
+            border-color: rgba(255, 107, 53, 0.2);
+        }
+
+        .intel-tag.link {
+            color: var(--accent-danger);
+            border-color: rgba(255, 51, 102, 0.2);
+        }
+
+        .intel-tag.keyword {
+            color: var(--accent-secondary);
+            border-color: rgba(123, 44, 191, 0.2);
+        }
+
+        /* Metrics */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            padding: 1.5rem;
+        }
+
+        .metric-card {
+            background: var(--glass-bg);
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .metric-label {
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 4px;
+        }
+
+        /* Scam indicator */
+        .scam-indicator {
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .scam-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .scam-badge.detected {
+            background: linear-gradient(135deg, rgba(255, 51, 102, 0.2), rgba(255, 107, 53, 0.1));
+            border: 1px solid var(--accent-danger);
+            color: var(--accent-danger);
+        }
+
+        .scam-badge.safe {
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(0, 212, 255, 0.1));
+            border: 1px solid var(--accent-success);
+            color: var(--accent-success);
+        }
+
+        .scam-badge.unknown {
+            background: var(--glass-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        /* Loading spinner */
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top-color: currentColor;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Sample messages */
+        .sample-messages {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .sample-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .sample-btns {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .sample-btn {
+            padding: 6px 12px;
+            background: var(--glass-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .sample-btn:hover {
+            background: var(--border-color);
+            color: var(--text-primary);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-animation"></div>
+
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">🍯</div>
+                <h1>Plutus Dashboard</h1>
+            </div>
+            <div class="status-badge">
+                <div class="status-dot" id="statusDot"></div>
+                <span id="statusText">Disconnected</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Chat Section -->
+        <section class="chat-section">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <div class="icon">💬</div>
+                        Conversation
+                    </div>
+                    <button class="btn btn-secondary" onclick="clearChat()"
+                        style="padding: 8px 16px; font-size: 0.8rem;">
+                        Clear
+                    </button>
+                </div>
+                <div class="chat-container" id="chatContainer">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">💭</div>
+                        <p>Send a scam message to start the conversation</p>
+                    </div>
+                </div>
+                <div class="sample-messages">
+                    <div class="sample-label">Quick samples:</div>
+                    <div class="sample-btns">
+                        <button class="sample-btn" onclick="useSample(0)">Banking Scam</button>
+                        <button class="sample-btn" onclick="useSample(1)">Lottery Scam</button>
+                        <button class="sample-btn" onclick="useSample(2)">OTP Phishing</button>
+                        <button class="sample-btn" onclick="useSample(3)">KYC Scam</button>
+                    </div>
+                </div>
+                <div class="input-area">
+                    <div class="input-row">
+                        <div class="input-wrapper">
+                            <textarea id="messageInput" placeholder="Type a scam message to test..."
+                                onkeydown="handleKeyDown(event)"></textarea>
+                        </div>
+                        <button class="btn btn-primary" id="sendBtn" onclick="sendMessage()">
+                            <span id="sendBtnText">Send</span>
+                            <div class="spinner" id="sendSpinner" style="display: none;"></div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Config & Intelligence Section -->
+        <aside class="config-section">
+            <!-- API Config -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <div class="icon">⚙️</div>
+                        Configuration
+                    </div>
+                </div>
+                <div class="config-group">
+                    <label class="config-label">API URL</label>
+                    <input type="text" id="apiUrl" value="http://localhost:8000" />
+                </div>
+                <div class="config-group" style="padding-top: 0;">
+                    <label class="config-label">API Key</label>
+                    <input type="text" id="apiKey" value="honeypot-test-key-2026" />
+                </div>
+                <div class="config-group" style="padding-top: 0;">
+                    <button class="btn btn-secondary" onclick="testConnection()" style="width: 100%;">
+                        Test Connection
+                    </button>
+                </div>
+            </div>
+
+            <!-- Scam Detection -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <div class="icon">🎯</div>
+                        Detection Status
+                    </div>
+                </div>
+                <div class="scam-indicator">
+                    <div class="scam-badge unknown" id="scamBadge">
+                        <span>Awaiting message...</span>
+                    </div>
+                </div>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-value" id="turnCount">0</div>
+                        <div class="metric-label">Turn</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="responseTime">0ms</div>
+                        <div class="metric-label">Response</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="intelCount">0</div>
+                        <div class="metric-label">Intel Items</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="continueStatus">-</div>
+                        <div class="metric-label">Continue</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Extracted Intelligence -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <div class="icon">🔍</div>
+                        Extracted Intelligence
+                    </div>
+                </div>
+                <div class="intel-grid" id="intelGrid">
+                    <div class="intel-item">
+                        <div class="intel-header">
+                            <span class="intel-label">Bank Accounts</span>
+                            <span class="intel-count" id="bankCount">0</span>
+                        </div>
+                        <div class="intel-list" id="bankList">-</div>
+                    </div>
+                    <div class="intel-item">
+                        <div class="intel-header">
+                            <span class="intel-label">UPI IDs</span>
+                            <span class="intel-count" id="upiCount">0</span>
+                        </div>
+                        <div class="intel-list" id="upiList">-</div>
+                    </div>
+                    <div class="intel-item">
+                        <div class="intel-header">
+                            <span class="intel-label">Phone Numbers</span>
+                            <span class="intel-count" id="phoneCount">0</span>
+                        </div>
+                        <div class="intel-list" id="phoneList">-</div>
+                    </div>
+                    <div class="intel-item">
+                        <div class="intel-header">
+                            <span class="intel-label">Phishing Links</span>
+                            <span class="intel-count" id="linkCount">0</span>
+                        </div>
+                        <div class="intel-list" id="linkList">-</div>
+                    </div>
+                    <div class="intel-item">
+                        <div class="intel-header">
+                            <span class="intel-label">Keywords</span>
+                            <span class="intel-count" id="keywordCount">0</span>
+                        </div>
+                        <div class="intel-list" id="keywordList">-</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <script>
+        // State
+        let sessionId = 'dashboard-' + Date.now();
+        let conversationHistory = [];
+        let isConnected = false;
+
+        // Sample messages
+        const sampleMessages = [
+            "URGENT: Your SBI account has been suspended! Update KYC immediately at http://sbi-kyc-fake.com or call +919876543210. Your account 1234567890123 will be blocked!",
+            "Congratulations! You won Rs.25 Lakhs in lucky draw! Send processing fee of Rs.1000 to winner@paytm to claim your prize immediately!",
+            "We detected unauthorized transaction of Rs.49,999 from your account. Share OTP to block this transaction. Call 8899776655 now!",
+            "Dear Customer, Your KYC is expired. Update now at www.bank-kyc-update.com or your account 9876543210987 will be deactivated. Pay Rs.500 to verify@ybl"
+        ];
+
+        // Test connection
+        async function testConnection() {
+            const apiUrl = document.getElementById('apiUrl').value;
+            const statusDot = document.getElementById('statusDot');
+            const statusText = document.getElementById('statusText');
+
+            try {
+                const response = await fetch(`${apiUrl}/health`);
+                if (response.ok) {
+                    const data = await response.json();
+                    statusDot.classList.add('connected');
+                    statusText.textContent = 'Connected';
+                    isConnected = true;
+                } else {
+                    throw new Error('Not ok');
+                }
+            } catch (error) {
+                statusDot.classList.remove('connected');
+                statusText.textContent = 'Disconnected';
+                isConnected = false;
+                alert('Failed to connect. Make sure the server is running:\nuvicorn api.main:app --reload --port 8000');
+            }
+        }
+
+        // Send message
+        async function sendMessage() {
+            const messageInput = document.getElementById('messageInput');
+            const message = messageInput.value.trim();
+
+            if (!message) return;
+
+            const apiUrl = document.getElementById('apiUrl').value;
+            const apiKey = document.getElementById('apiKey').value;
+            const sendBtn = document.getElementById('sendBtn');
+            const sendBtnText = document.getElementById('sendBtnText');
+            const sendSpinner = document.getElementById('sendSpinner');
+
+            // Add scammer message to chat
+            addMessage('scammer', message);
+            messageInput.value = '';
+
+            // Disable button
+            sendBtn.disabled = true;
+            sendBtnText.style.display = 'none';
+            sendSpinner.style.display = 'block';
+
+            try {
+                const payload = {
+                    sessionId: sessionId,
+                    message: {
+                        sender: 'scammer',
+                        text: message,
+                        timestamp: new Date().toISOString()
+                    },
+                    conversationHistory: conversationHistory,
+                    metadata: {
+                        channel: 'dashboard',
+                        language: 'en',
+                        locale: 'en-IN'
+                    }
+                };
+
+                const response = await fetch(`${apiUrl}/analyze`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-api-key': apiKey
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Update conversation history
+                    conversationHistory.push({
+                        sender: 'scammer',
+                        text: message,
+                        timestamp: new Date().toISOString()
+                    });
+
+                    if (data.agentResponse) {
+                        addMessage('agent', data.agentResponse);
+                        conversationHistory.push({
+                            sender: 'agent',
+                            text: data.agentResponse,
+                            timestamp: new Date().toISOString()
+                        });
+                    }
+
+                    // Update UI
+                    updateDetectionStatus(data);
+                    updateMetrics(data);
+                    updateIntelligence(data.extractedIntelligence);
+
+                    // Check if conversation ended
+                    if (!data.continueConversation) {
+                        addSystemMessage('Conversation ended. Starting new session...');
+                        sessionId = 'dashboard-' + Date.now();
+                        conversationHistory = [];
+                    }
+                } else {
+                    throw new Error(data.error || data.detail || 'Unknown error');
+                }
+            } catch (error) {
+                addSystemMessage(`Error: ${error.message}`);
+            } finally {
+                sendBtn.disabled = false;
+                sendBtnText.style.display = 'inline';
+                sendSpinner.style.display = 'none';
+            }
+        }
+
+        // Add message to chat
+        function addMessage(sender, text) {
+            const container = document.getElementById('chatContainer');
+
+            // Remove empty state if exists
+            const emptyState = container.querySelector('.empty-state');
+            if (emptyState) emptyState.remove();
+
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+
+            const time = new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+
+            messageDiv.innerHTML = `
+                <div class="message-header">
+                    <span class="message-sender">${sender === 'scammer' ? '👤 Scammer' : '🤖 Agent'}</span>
+                    <span class="message-time">${time}</span>
+                </div>
+                <div class="message-text">${text}</div>
+            `;
+
+            container.appendChild(messageDiv);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function addSystemMessage(text) {
+            const container = document.getElementById('chatContainer');
+            const msgDiv = document.createElement('div');
+            msgDiv.style.cssText = 'text-align: center; color: var(--text-secondary); font-size: 0.8rem; padding: 8px;';
+            msgDiv.textContent = text;
+            container.appendChild(msgDiv);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // Update detection status
+        function updateDetectionStatus(data) {
+            const badge = document.getElementById('scamBadge');
+            badge.className = 'scam-badge';
+
+            if (data.scamDetected) {
+                badge.classList.add('detected');
+                badge.innerHTML = '⚠️ SCAM DETECTED';
+            } else {
+                badge.classList.add('safe');
+                badge.innerHTML = '✓ No scam detected';
+            }
+        }
+
+        // Update metrics
+        function updateMetrics(data) {
+            const metrics = data.engagementMetrics || {};
+            document.getElementById('turnCount').textContent = metrics.conversationTurn || 0;
+            document.getElementById('responseTime').textContent = (metrics.responseTimeMs || 0) + 'ms';
+            document.getElementById('intelCount').textContent = metrics.totalIntelligenceItems || 0;
+            document.getElementById('continueStatus').textContent = data.continueConversation ? 'Yes' : 'No';
+        }
+
+        // Update intelligence
+        function updateIntelligence(intel) {
+            if (!intel) return;
+
+            updateIntelList('bank', intel.bankAccounts || [], '');
+            updateIntelList('upi', intel.upiIds || [], 'upi');
+            updateIntelList('phone', intel.phoneNumbers || [], 'phone');
+            updateIntelList('link', intel.phishingLinks || [], 'link');
+            updateIntelList('keyword', intel.suspiciousKeywords || [], 'keyword');
+        }
+
+        function updateIntelList(type, items, tagClass) {
+            const countEl = document.getElementById(`${type}Count`);
+            const listEl = document.getElementById(`${type}List`);
+
+            countEl.textContent = items.length;
+
+            if (items.length === 0) {
+                listEl.innerHTML = '<span style="color: var(--text-secondary)">-</span>';
+            } else {
+                listEl.innerHTML = items.map(item =>
+                    `<span class="intel-tag ${tagClass}">${item}</span>`
+                ).join('');
+            }
+        }
+
+        // Use sample message
+        function useSample(index) {
+            document.getElementById('messageInput').value = sampleMessages[index];
+            document.getElementById('messageInput').focus();
+        }
+
+        // Clear chat
+        function clearChat() {
+            document.getElementById('chatContainer').innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-state-icon">💭</div>
+                    <p>Send a scam message to start the conversation</p>
+                </div>
+            `;
+            sessionId = 'dashboard-' + Date.now();
+            conversationHistory = [];
+
+            // Reset indicators
+            document.getElementById('scamBadge').className = 'scam-badge unknown';
+            document.getElementById('scamBadge').innerHTML = '<span>Awaiting message...</span>';
+            document.getElementById('turnCount').textContent = '0';
+            document.getElementById('responseTime').textContent = '0ms';
+            document.getElementById('intelCount').textContent = '0';
+            document.getElementById('continueStatus').textContent = '-';
+
+            ['bank', 'upi', 'phone', 'link', 'keyword'].forEach(type => {
+                document.getElementById(`${type}Count`).textContent = '0';
+                document.getElementById(`${type}List`).innerHTML = '-';
+            });
+        }
+
+        // Handle Enter key
+        function handleKeyDown(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
+            }
+        }
+
+        // Auto-test connection on load
+        window.onload = () => {
+            testConnection();
+        };
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,756 @@
+{
+    "version": "1.0",
+    "description": "50 realistic scam messages for testing the Honeypot Agent",
+    "categories": {
+        "banking": "Bank account suspension, KYC updates, security alerts",
+        "lottery": "Fake prize/lottery winning notifications",
+        "delivery": "Package delivery scams",
+        "job": "Fake job offers",
+        "otp": "OTP/password phishing",
+        "government": "Fake government notices"
+    },
+    "messages": [
+        {
+            "id": 1,
+            "category": "banking",
+            "text": "URGENT: Your SBI account has been suspended due to incomplete KYC. Update immediately at http://sbi-kyc-update.com or your account will be closed within 24 hours.",
+            "expected_intelligence": {
+                "phishingLinks": [
+                    "http://sbi-kyc-update.com"
+                ],
+                "suspiciousKeywords": [
+                    "urgent",
+                    "suspended",
+                    "kyc",
+                    "account closed"
+                ]
+            }
+        },
+        {
+            "id": 2,
+            "category": "banking",
+            "text": "Dear Customer, Your HDFC netbanking access expires today. Click here to verify: www.hdfc-secure-login.co.in. Contact: 9876543210",
+            "expected_intelligence": {
+                "phishingLinks": [
+                    "www.hdfc-secure-login.co.in"
+                ],
+                "phoneNumbers": [
+                    "+919876543210"
+                ],
+                "suspiciousKeywords": [
+                    "expire",
+                    "verify",
+                    "click here"
+                ]
+            }
+        },
+        {
+            "id": 3,
+            "category": "otp",
+            "text": "This is RBI Security Team. We detected unauthorized transaction of Rs.49,999 from your account. Share OTP sent to your number to block this transaction immediately.",
+            "expected_intelligence": {
+                "suspiciousKeywords": [
+                    "rbi",
+                    "unauthorized",
+                    "otp",
+                    "immediately"
+                ]
+            }
+        },
+        {
+            "id": 4,
+            "category": "banking",
+            "text": "ALERT: Your PAN Card is linked to multiple bank accounts. Legal action will be taken. To avoid penalty, transfer Rs.5000 to scammer@paytm for verification fee.",
+            "expected_intelligence": {
+                "upiIds": [
+                    "scammer@paytm"
+                ],
+                "suspiciousKeywords": [
+                    "pan card",
+                    "legal action",
+                    "penalty",
+                    "verify"
+                ]
+            }
+        },
+        {
+            "id": 5,
+            "category": "lottery",
+            "text": "Congratulations! You have won Rs.25,00,000 in Amazon Lucky Draw! Claim your prize now. Send processing fee of Rs.1999 to amazon.prize@ybl",
+            "expected_intelligence": {
+                "upiIds": [
+                    "amazon.prize@ybl"
+                ],
+                "suspiciousKeywords": [
+                    "winner",
+                    "prize",
+                    "claim now"
+                ]
+            }
+        },
+        {
+            "id": 6,
+            "category": "delivery",
+            "text": "Your package from Flipkart is on hold due to address issue. Pay Rs.49 delivery charge to continue: bit.ly/flipkart-delivery. Expires in 2 hours!",
+            "expected_intelligence": {
+                "phishingLinks": [
+                    "bit.ly/flipkart-delivery"
+                ],
+                "suspiciousKeywords": [
+                    "expire",
+                    "limited time"
+                ]
+            }
+        },
+        {
+            "id": 7,
+            "category": "job",
+            "text": "WORK FROM HOME! Earn Rs.5000-15000 daily. No experience needed. WhatsApp us at +91 8765432109 for immediate joining. Limited positions!",
+            "expected_intelligence": {
+                "phoneNumbers": [
+                    "+918765432109"
+                ],
+                "suspiciousKeywords": [
+                    "immediately",
+                    "limited time"
+                ]
+            }
+        },
+        {
+            "id": 8,
+            "category": "government",
+            "text": "Income Tax Dept: Your ITR refund of Rs.15,340 is pending. Update your bank account details at http://incometax-refund.gov-in.com before it expires.",
+            "expected_intelligence": {
+                "phishingLinks": [
+                    "http://incometax-refund.gov-in.com"
+                ],
+                "suspiciousKeywords": [
+                    "refund",
+                    "expire",
+                    "update"
+                ]
+            }
+        },
+        {
+            "id": 9,
+            "category": "otp",
+            "text": "Your AXIS Bank account shows suspicious activity. To secure your account, share your Debit Card number, CVV and OTP. Call: 7654321098",
+            "expected_intelligence": {
+                "phoneNumbers": [
+                    "+917654321098"
+                ],
+                "suspiciousKeywords": [
+                    "debit card",
+                    "cvv",
+                    "otp",
+                    "unusual activity"
+                ]
+            }
+        },
+        {
+            "id": 10,
+            "category": "banking",
+            "text": "FINAL NOTICE: Your Aadhaar is not linked to your bank account. Account will be frozen in 24hrs. Update now: https://aadhaar-bank-link.in Contact: 6543210987",
+            "expected_intelligence": {
+                "phishingLinks": [
+                    "https://aadhaar-bank-link.in"
+                ],
+                "phoneNumbers": [
+                    "+916543210987"
+                ],
+                "suspiciousKeywords": [
+                    "final notice",
+                    "aadhaar",
+                    "account frozen"
+                ]
+            }
+        },
+        {
+            "id": 11,
+            "category": "banking",
+            "text": "Your ICICI Credit Card payment of Rs.45,000 is overdue. Pay immediately to avoid legal action. Transfer to: icici.payment@oksbi",
+            "expected_intelligence": {
+                "upiIds": [
+                    "icici.payment@oksbi"
+                ],
+                "suspiciousKeywords": [
+                    "credit card",
+                    "immediately",
+                    "legal action"
+                ]
+            }
+        },
+        {
+            "id": 12,
+            "category": "lottery",
+            "text": "You are selected for Jio 5G Lucky Winner! Get iPhone 15 Pro FREE. Registration fee Rs.999 only. Pay to: jio.winner@axisbank",
+            "expected_intelligence": {
+                "upiIds": [
+                    "jio.winner@axisbank"
+                ],
+                "suspiciousKeywords": [
+                    "winner",
+                    "prize"
+                ]
+            }
+        },
+        {
+            "id": 13,
+            "category": "otp",
+            "text": "Your WhatsApp is being accessed from another device. Send verification code to prevent hacking. Reply with 6-digit OTP received on your phone.",
+            "expected_intelligence": {
+                "suspiciousKeywords": [
+                    "verify",
+                    "otp"
+                ]
+            }
+        },
+        {
+            "id": 14,
+            "category": "banking",
+            "text": "Bank of Baroda Alert: Your account 1234567890123456 has been debited Rs.29,999. If not done by you, call 9988776655 immediately with your ATM PIN.",
+            "expected_intelligence": {
+                "bankAccounts": [
+                    "1234567890123456"
+                ],
+                "phoneNumbers": [
+                    "+919988776655"
+                ],
+                "suspiciousKeywords": [
+                    "immediately",
+                    "atm",
+                    "pin"
+                ]
+            }
+        },
+        {
+            "id": 15,
+            "category": "government",
+            "text": "EPFO Notice: Your PF withdrawal request rejected. Update bank details at www.epfo-update.co.in with account number and IFSC. Deadline: Today.",
+            "expected_intelligence": {
+                "phishingLinks": [
+                    "www.epfo-update.co.in"
+                ],
+                "suspiciousKeywords": [
+                    "update",
+                    "final notice"
+                ]
+            }
+        },
+        {
+            "id": 16,
+            "category": "delivery",
+            "text": "Amazon: Your order #AM12345 couldn't be delivered. Reschedule with address fee Rs.25. Pay here: tinyurl.com/amazon-redeliver",
+            "expected_intelligence": {
+                "phishingLinks": [
+                    "tinyurl.com/amazon-redeliver"
+                ],
+                "suspiciousKeywords": []
+            }
+        },
+        {
+            "id": 17,
+            "category": "job",
+            "text": "Urgent hiring for data entry job. Salary Rs.45000/month. Joining fee Rs.500 only. Send to recruitment@kotak. Call 8877665544 for details.",
+            "expected_intelligence": {
+                "upiIds": [
+                    "recruitment@kotak"
+                ],
+                "phoneNumbers": [
+                    "+918877665544"
+                ],
+                "suspiciousKeywords": [
+                    "urgent"
+                ]
+            }
+        },
+        {
+            "id": 18,
+            "category": "banking",
+            "text": "RBI WARNING: Your mobile number is registered with 8 bank accounts illegally. Case filed. Pay fine Rs.25000 to avoid arrest. UPI: rbi.fine@hdfc",
+            "expected_intelligence": {
+                "upiIds": [
+                    "rbi.fine@hdfc"
+                ],
+                "suspiciousKeywords": [
+                    "rbi",
+                    "warning",
+                    "case filed",
+                    "arrest",
+                    "fine"
+                ]
+            }
+        },
+        {
+            "id": 19,
+            "category": "otp",
+            "text": "SBI YONO: Complete your pending transaction of Rs.15000. Enter OTP 234567 to confirm. If not initiated by you, call 9123456780 with card details.",
+            "expected_intelligence": {
+                "phoneNumbers": [
+                    "+919123456780"
+                ],
+                "suspiciousKeywords": [
+                    "otp"
+                ]
+            }
+        },
+        {
+            "id": 20,
+            "category": "lottery",
+            "text": "Google announces you won Rs.50 Lakhs! Claim at www.google-prize.com. Processing fee Rs.5000. Limited time offer - expires in 1 hour!",
+            "expected_intelligence": {
+                "phishingLinks": [
+                    "www.google-prize.com"
+                ],
+                "suspiciousKeywords": [
+                    "winner",
+                    "prize",
+                    "claim now",
+                    "limited time",
+                    "expire"
+                ]
+            }
+        },
+        {
+            "id": 21,
+            "category": "banking",
+            "text": "Your SBI debit card 4567-8901-2345-6789 is blocked due to security reasons. To unblock, send Rs.99 to sbi.unblock@paytm. Urgent!",
+            "expected_intelligence": {
+                "upiIds": [
+                    "sbi.unblock@paytm"
+                ],
+                "suspiciousKeywords": [
+                    "blocked",
+                    "debit card",
+                    "urgent",
+                    "security alert"
+                ]
+            }
+        },
+        {
+            "id": 22,
+            "category": "government",
+            "text": "Cyber Crime Police: Complaint registered against your Aadhaar. Report to nearest station or pay settlement Rs.50000 to cybercrime@ybl",
+            "expected_intelligence": {
+                "upiIds": [
+                    "cybercrime@ybl"
+                ],
+                "suspiciousKeywords": [
+                    "police",
+                    "aadhaar"
+                ]
+            }
+        },
+        {
+            "id": 23,
+            "category": "otp",
+            "text": "HDFC Bank Security: Suspicious login detected. Verify by sharing OTP and last 4 digits of your debit card. Reply URGENT.",
+            "expected_intelligence": {
+                "suspiciousKeywords": [
+                    "security alert",
+                    "unusual activity",
+                    "verify",
+                    "otp",
+                    "debit card",
+                    "urgent"
+                ]
+            }
+        },
+        {
+            "id": 24,
+            "category": "job",
+            "text": "International call center hiring. Work 4 hours, earn Rs.2000 daily. Training fee Rs.1500. Pay to hr.recruit@freecharge. WhatsApp 7766554433",
+            "expected_intelligence": {
+                "upiIds": [
+                    "hr.recruit@freecharge"
+                ],
+                "phoneNumbers": [
+                    "+917766554433"
+                ],
+                "suspiciousKeywords": []
+            }
+        },
+        {
+            "id": 25,
+            "category": "banking",
+            "text": "ALERT from PNB: Your fixed deposit 987654321012345 maturing today. Update nominee details at http://pnb-fd-update.in or lose interest.",
+            "expected_intelligence": {
+                "bankAccounts": [
+                    "987654321012345"
+                ],
+                "phishingLinks": [
+                    "http://pnb-fd-update.in"
+                ],
+                "suspiciousKeywords": [
+                    "update"
+                ]
+            }
+        },
+        {
+            "id": 26,
+            "category": "delivery",
+            "text": "DHL Express: Package from USA stuck at customs. Pay duty Rs.3500 immediately: bit.ly/dhl-customs. Tracking: 9876543210",
+            "expected_intelligence": {
+                "phishingLinks": [
+                    "bit.ly/dhl-customs"
+                ],
+                "phoneNumbers": [
+                    "+919876543210"
+                ],
+                "suspiciousKeywords": [
+                    "immediately"
+                ]
+            }
+        },
+        {
+            "id": 27,
+            "category": "lottery",
+            "text": "Paytm Cashback Winner! Rs.10,000 credited. Claim by paying processing charges Rs.299 to paytm.winner@paytm. Offer valid today only!",
+            "expected_intelligence": {
+                "upiIds": [
+                    "paytm.winner@paytm"
+                ],
+                "suspiciousKeywords": [
+                    "winner",
+                    "claim now",
+                    "limited time"
+                ]
+            }
+        },
+        {
+            "id": 28,
+            "category": "government",
+            "text": "Electricity Board: Your connection will be disconnected today for non-payment. Pay Rs.1847 urgently at www.electricity-bill-pay.com",
+            "expected_intelligence": {
+                "phishingLinks": [
+                    "www.electricity-bill-pay.com"
+                ],
+                "suspiciousKeywords": [
+                    "urgent"
+                ]
+            }
+        },
+        {
+            "id": 29,
+            "category": "otp",
+            "text": "Your Kotak 811 account password expires in 2 hours. Reset now with OTP and account number 5566778899001122. Call 6655443322 for help.",
+            "expected_intelligence": {
+                "bankAccounts": [
+                    "5566778899001122"
+                ],
+                "phoneNumbers": [
+                    "+916655443322"
+                ],
+                "suspiciousKeywords": [
+                    "password",
+                    "expire",
+                    "otp"
+                ]
+            }
+        },
+        {
+            "id": 30,
+            "category": "banking",
+            "text": "ICICI Bank: Your Credit Card CVV is expiring. Update at https://icici-cvv-update.com to continue online transactions. Act now!",
+            "expected_intelligence": {
+                "phishingLinks": [
+                    "https://icici-cvv-update.com"
+                ],
+                "suspiciousKeywords": [
+                    "credit card",
+                    "cvv",
+                    "expire",
+                    "update",
+                    "act now"
+                ]
+            }
+        },
+        {
+            "id": 31,
+            "category": "job",
+            "text": "Amazon Part-time Work! Rate products from home. Earn Rs.500-3000 daily. Registration: https://amazon-jobs.work. Contact 9911223344",
+            "expected_intelligence": {
+                "phishingLinks": [
+                    "https://amazon-jobs.work"
+                ],
+                "phoneNumbers": [
+                    "+919911223344"
+                ],
+                "suspiciousKeywords": []
+            }
+        },
+        {
+            "id": 32,
+            "category": "lottery",
+            "text": "CONGRATS! Your number selected in Airtel Lucky Draw. Win Rs.5,00,000! Claim fee Rs.3000. UPI: airtel.lucky@airtel. Hurry!",
+            "expected_intelligence": {
+                "upiIds": [
+                    "airtel.lucky@airtel"
+                ],
+                "suspiciousKeywords": [
+                    "winner",
+                    "prize",
+                    "claim now"
+                ]
+            }
+        },
+        {
+            "id": 33,
+            "category": "government",
+            "text": "LIC Policy Alert: Your policy 123456789 is lapsing. Pay premium Rs.12,500 to lic.payment@sbi to continue coverage. Last date: Today.",
+            "expected_intelligence": {
+                "upiIds": [
+                    "lic.payment@sbi"
+                ],
+                "suspiciousKeywords": [
+                    "final notice"
+                ]
+            }
+        },
+        {
+            "id": 34,
+            "category": "otp",
+            "text": "PhonePe: Transaction of Rs.49,999 initiated from your account. If not you, share OTP to cancel. Time remaining: 5 mins. Call 8899001122",
+            "expected_intelligence": {
+                "phoneNumbers": [
+                    "+918899001122"
+                ],
+                "suspiciousKeywords": [
+                    "otp",
+                    "limited time"
+                ]
+            }
+        },
+        {
+            "id": 35,
+            "category": "banking",
+            "text": "Union Bank Security: Account 112233445566778899 flagged for money laundering. Clear this by paying investigation fee to union.secure@pnb",
+            "expected_intelligence": {
+                "bankAccounts": [
+                    "112233445566778899"
+                ],
+                "upiIds": [
+                    "union.secure@pnb"
+                ],
+                "suspiciousKeywords": [
+                    "security alert"
+                ]
+            }
+        },
+        {
+            "id": 36,
+            "category": "delivery",
+            "text": "India Post: Your international parcel held at Mumbai customs. Pay Rs.850 duty: goo.gl/indiapost-duty. Parcel ID: IP987654321",
+            "expected_intelligence": {
+                "phishingLinks": [
+                    "goo.gl/indiapost-duty"
+                ],
+                "suspiciousKeywords": []
+            }
+        },
+        {
+            "id": 37,
+            "category": "job",
+            "text": "MNC Company Hiring Freshers! Package 6-12 LPA. Registration fee Rs.849 refundable. Pay: jobs@mobikwik. Interview tomorrow!",
+            "expected_intelligence": {
+                "upiIds": [
+                    "jobs@mobikwik"
+                ],
+                "suspiciousKeywords": [
+                    "refund"
+                ]
+            }
+        },
+        {
+            "id": 38,
+            "category": "government",
+            "text": "Traffic Police: Challan of Rs.5000 pending against your vehicle. Pay online at www.traffic-challan-pay.in to avoid license suspension.",
+            "expected_intelligence": {
+                "phishingLinks": [
+                    "www.traffic-challan-pay.in"
+                ],
+                "suspiciousKeywords": [
+                    "suspended",
+                    "police"
+                ]
+            }
+        },
+        {
+            "id": 39,
+            "category": "otp",
+            "text": "Google Pay: Your UPI PIN expired. Reset by clicking http://gpay-pin-reset.com and entering OTP. Valid for 10 minutes only.",
+            "expected_intelligence": {
+                "phishingLinks": [
+                    "http://gpay-pin-reset.com"
+                ],
+                "suspiciousKeywords": [
+                    "expire",
+                    "otp",
+                    "pin",
+                    "limited time"
+                ]
+            }
+        },
+        {
+            "id": 40,
+            "category": "lottery",
+            "text": "KBC Winner! Aap jeet gaye Rs.25 Lakh! Claim karne ke liye Rs.11,000 registration fee bhejiye: kbc.winner@jiomoney. Call 9090909090",
+            "expected_intelligence": {
+                "upiIds": [
+                    "kbc.winner@jiomoney"
+                ],
+                "phoneNumbers": [
+                    "+919090909090"
+                ],
+                "suspiciousKeywords": [
+                    "winner",
+                    "claim now"
+                ]
+            }
+        },
+        {
+            "id": 41,
+            "category": "banking",
+            "text": "Yes Bank: Loan pre-approved Rs.5 Lakhs for you! Low interest 7.5%. Processing fee Rs.2999. Pay: yesbank.loan@yesbankltd. Limited period!",
+            "expected_intelligence": {
+                "upiIds": [
+                    "yesbank.loan@yesbankltd"
+                ],
+                "suspiciousKeywords": [
+                    "limited time"
+                ]
+            }
+        },
+        {
+            "id": 42,
+            "category": "otp",
+            "text": "IRCTC: Your Tatkal booking failed. Refund Rs.2500 initiated. Confirm bank account 9988776655443322 and OTP to process.",
+            "expected_intelligence": {
+                "bankAccounts": [
+                    "9988776655443322"
+                ],
+                "suspiciousKeywords": [
+                    "refund",
+                    "otp",
+                    "confirm identity"
+                ]
+            }
+        },
+        {
+            "id": 43,
+            "category": "government",
+            "text": "GST Department: Discrepancy found in your returns. Penalty Rs.50,000 or imprisonment. Settle at gst.payment@federal. Deadline today.",
+            "expected_intelligence": {
+                "upiIds": [
+                    "gst.payment@federal"
+                ],
+                "suspiciousKeywords": [
+                    "penalty",
+                    "final notice"
+                ]
+            }
+        },
+        {
+            "id": 44,
+            "category": "delivery",
+            "text": "Your Myntra order worth Rs.8999 ready! Pay COD charge Rs.149 to receive: myntra.cod@indus. Tracking: bit.ly/myntra-track",
+            "expected_intelligence": {
+                "upiIds": [
+                    "myntra.cod@indus"
+                ],
+                "phishingLinks": [
+                    "bit.ly/myntra-track"
+                ],
+                "suspiciousKeywords": []
+            }
+        },
+        {
+            "id": 45,
+            "category": "job",
+            "text": "YouTube Video Liking Job! Earn Rs.200 per video. Daily payment. Register: https://youtube-earn.online. Contact: 7788990011",
+            "expected_intelligence": {
+                "phishingLinks": [
+                    "https://youtube-earn.online"
+                ],
+                "phoneNumbers": [
+                    "+917788990011"
+                ],
+                "suspiciousKeywords": []
+            }
+        },
+        {
+            "id": 46,
+            "category": "banking",
+            "text": "Canara Bank Notice: EMI bounce of Rs.15,000. CIBIL score affected. Clear dues with penalty at canara.emi@rbl. Contact 6677889900",
+            "expected_intelligence": {
+                "upiIds": [
+                    "canara.emi@rbl"
+                ],
+                "phoneNumbers": [
+                    "+916677889900"
+                ],
+                "suspiciousKeywords": [
+                    "penalty"
+                ]
+            }
+        },
+        {
+            "id": 47,
+            "category": "otp",
+            "text": "Netflix: Subscription expired. Renew at special price Rs.99/year. Enter card details at www.netflix-renew.co. Use code: NETFLIX99",
+            "expected_intelligence": {
+                "phishingLinks": [
+                    "www.netflix-renew.co"
+                ],
+                "suspiciousKeywords": [
+                    "expire"
+                ]
+            }
+        },
+        {
+            "id": 48,
+            "category": "lottery",
+            "text": "Tata Motors Lucky Customer! Win Tata Nexon worth Rs.12 Lakhs! Booking amount Rs.25000. Transfer: tata.lucky@axisbank. Draw tomorrow!",
+            "expected_intelligence": {
+                "upiIds": [
+                    "tata.lucky@axisbank"
+                ],
+                "suspiciousKeywords": [
+                    "winner",
+                    "transfer"
+                ]
+            }
+        },
+        {
+            "id": 49,
+            "category": "government",
+            "text": "E-Court Summons: Case filed against you for cheque bounce. Appear at court or pay settlement Rs.1,00,000 to court.payment@centralbank",
+            "expected_intelligence": {
+                "upiIds": [
+                    "court.payment@centralbank"
+                ],
+                "suspiciousKeywords": [
+                    "court",
+                    "case filed"
+                ]
+            }
+        },
+        {
+            "id": 50,
+            "category": "banking",
+            "text": "HDFC Life: Claim Rs.5,00,000 insurance benefit approved for nominee. Bank details needed: Account 223344556677889900, IFSC, OTP. Call 9898989898",
+            "expected_intelligence": {
+                "bankAccounts": [
+                    "223344556677889900"
+                ],
+                "phoneNumbers": [
+                    "+919898989898"
+                ],
+                "suspiciousKeywords": [
+                    "otp",
+                    "claim now"
+                ]
+            }
+        }
+    ]
+}
