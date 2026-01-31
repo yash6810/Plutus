@@ -22,7 +22,7 @@ AI-powered honeypot system that detects scams, engages scammers autonomously, an
 
 ```bash
 # Clone the repository
-git clone <your-repo-url>
+git clone https://github.com/yash6810/Plutus
 cd honeypot-agent
 
 # Create virtual environment
