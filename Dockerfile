@@ -22,6 +22,8 @@ ENV PYTHONPATH=/app
 EXPOSE 8000
 
 # Run the application using gunicorn for production stability
-# We use the shell form to allow environment variable expansion
-CMD gunicorn -w 4 -k uvicorn.workers.UvicornWorker api.main:app --bind 0.0.0.0:$PORT
+# -w 1: Reduced to 1 worker to fit in 512MB RAM
+# --timeout 120: Increased timeout for slow AI initialization
+CMD gunicorn -w 1 -k uvicorn.workers.UvicornWorker api.main:app --bind 0.0.0.0:$PORT --timeout 120
+
 
