@@ -63,11 +63,25 @@ class DetectorAgent:
             max_output_tokens=500,
         )
         
-        return genai.GenerativeModel(
-            model_name=self.model_name,
-            generation_config=generation_config,
-            system_instruction=DETECTOR_SYSTEM_PROMPT,
-        )
+        try:
+            # Try with system_instruction (modern way)
+            model = genai.GenerativeModel(
+                model_name=self.model_name,
+                generation_config=generation_config,
+                system_instruction=DETECTOR_SYSTEM_PROMPT,
+            )
+            self.uses_system_instruction = True
+            return model
+        except TypeError:
+            # Fallback for older google-generativeai versions
+            logger.warning("system_instruction not supported by this version of google-generativeai. Using prompt prefix fallback.")
+            model = genai.GenerativeModel(
+                model_name=self.model_name,
+                generation_config=generation_config,
+            )
+            self.uses_system_instruction = False
+            return model
+
     
     def detect_scam(
         self, 
@@ -99,8 +113,13 @@ class DetectorAgent:
                 # Build prompt with history context
                 prompt = build_detector_prompt(message, history)
                 
+                # If system_instruction was not supported, prepend it to the prompt
+                if not getattr(self, "uses_system_instruction", True):
+                    prompt = f"{DETECTOR_SYSTEM_PROMPT}\n\n{prompt}"
+                
                 # Call Gemini API
                 response = self.model.generate_content(prompt)
+
                 
                 # Parse JSON response
                 result = self._parse_response(response.text)
