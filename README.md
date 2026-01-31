@@ -1,195 +1,434 @@
-# Plutus - Honeypot Scam Detection Agent
+# 🛡️ Honeypot Scam Detection Agent
 
-AI-powered system that detects scam messages, engages scammers autonomously, and extracts intelligence (bank accounts, UPI IDs, phishing links) for the GUVI x HCL India AI Impact Buildathon.
+AI-powered honeypot system that detects scams, engages scammers autonomously, and extracts intelligence.
 
-## 🚀 Quick Start
+**Hackathon:** GUVI x HCL India AI Impact Buildathon  
+**Problem Statement:** Agentic Honey-Pot for Scam Detection  
+**Team:** Yash, Aniket Kumar Singh, Krishna Garg, Aayush Srivastava  
+**Timeline:** January 27 - February 5, 2026
 
-### 1. Install Dependencies
+---
+
+## 🚀 Quick Start (First Time Setup)
+
+### Prerequisites
+
+- Python 3.10 or higher
+- Git
+- Google account (for free Gemini API key)
+- Code editor (VS Code recommended)
+
+### Step 1: Clone and Setup
 
 ```bash
-cd d:\Plutus\honeypot-agent
+# Clone the repository
+git clone <your-repo-url>
+cd honeypot-agent
+
+# Create virtual environment
+python -m venv venv
+
+# Activate virtual environment
+# Windows:
+venv\Scripts\activate
+# Mac/Linux:
+source venv/bin/activate
+
+# Install dependencies
 pip install -r requirements.txt
 ```
 
-### 2. Configure Environment
+### Step 2: Get Your Free Gemini API Key
+
+1. Go to <https://aistudio.google.com/app/apikey>
+2. Sign in with Google account
+3. Click "Create API key in new project"
+4. Copy the key (starts with `AIza...`)
+
+### Step 3: Configure Environment
 
 ```bash
-# Copy the example env file
-copy .env.example .env
+# Copy the example environment file
+cp .env.example .env
 
-# Edit .env and add your Gemini API key
-# GEMINI_API_KEY=your_key_here
-# API_SECRET_KEY=your_secret_key_here
+# Edit .env and add your API key
+# On Windows: notepad .env
+# On Mac/Linux: nano .env
 ```
 
-### 3. Run Tests (No API Key Required)
+Your `.env` should look like:
+GEMINI_API_KEY=AIzaSyC_your_actual_key_here
+API_SECRET_KEY=your-unique-secret-key-123
+AI_PROVIDER=gemini
+
+### Step 4: Verify Setup
 
 ```bash
-# Test intelligence extraction
-python tests/manual_test.py extractors
+# Test configuration
+python config.py
 
-# Run all unit tests
-pytest tests/test_extractors.py tests/test_agents.py -v
+# You should see:
+# ✅ Configuration is valid!
+
+# Run tests
+python -m pytest tests/ -v
 ```
 
-### 4. Run Tests (With API Key)
+---
+
+## 📁 Project Structure
+
+honeypot-agent/
+├── agents/              # Yash's work - AI agent system
+│   ├── detector_agent.py
+│   ├── actor_agent.py
+│   ├── investigator_agent.py
+│   ├── session_manager.py
+│   └── orchestrator.py
+│
+├── api/                 # Aniket's work - FastAPI backend
+│   ├── main.py
+│   ├── models.py
+│   ├── callback.py
+│   └── auth.py
+│
+├── intelligence/        # Aayush's work - Pattern extraction
+│   ├── extractors.py
+│   ├── validators.py
+│   └── scam_database.json
+│
+├── tests/              # Aayush's work - Testing
+│   ├── test_api.py
+│   ├── test_agents.py
+│   └── manual_test.py
+│
+├── dashboard/          # Krishna's work - React frontend
+│   └── src/
+│       ├── App.jsx
+│       └── components/
+│
+├── config.py           # Configuration manager
+├── requirements.txt    # Python dependencies
+└── .env               # Your API keys (never commit!)
+
+---
+
+## 👥 Team Member Quick Start
+
+### Yash (Agent Architect)
 
 ```bash
-# Test full agent functionality
-python tests/manual_test.py all
+# Your main folder
+cd agents/
+
+# Start with detector agent
+# Use Gemini CLI guide section for Yash
+
+# Test your work
+python -m pytest tests/test_agents.py -v
 ```
 
-### 5. Start the Server
+### Aniket (Backend Engineer)
 
 ```bash
-uvicorn api.main:app --reload --port 8000
+# Your main folder
+cd api/
+
+# Start the development server
+uvicorn api.main:app --reload
+
+# Server runs at: http://localhost:8000
+# API docs at: http://localhost:8000/docs
+
+# Test with curl
+curl http://localhost:8000/health
 ```
 
-### 6. Test the API
+### Aayush (Testing Lead)
+
+```bash
+# Your main folders
+cd intelligence/  # or cd tests/
+
+# Run extraction tests
+python -m pytest tests/test_extractors.py -v
+
+# Run manual test
+python tests/manual_test.py
+
+# Generate coverage report
+pytest --cov=. --cov-report=html
+```
+
+### Krishna (Frontend Developer)
+
+```bash
+# Your main folder
+cd dashboard/
+
+# Install dependencies
+npm install
+
+# Start development server
+npm start
+
+# Frontend runs at: http://localhost:3000
+```
+
+---
+
+## 🔧 Common Commands
+
+### Run the API Server
+
+```bash
+# Development mode (auto-reload on file changes)
+uvicorn api.main:app --reload
+
+# Production mode
+uvicorn api.main:app --host 0.0.0.0 --port 8000
+```
+
+### Run Tests
+
+```bash
+# Run all tests
+pytest
+
+# Run with verbose output
+pytest -v
+
+# Run specific test file
+pytest tests/test_api.py -v
+
+# Run with coverage
+pytest --cov=. --cov-report=term-missing
+```
+
+### Check Code Quality
+
+```bash
+# Format code
+black agents/ api/ intelligence/
+
+# Check for errors
+pylint agents/ api/ intelligence/
+
+# Type checking
+mypy agents/ api/
+```
+
+---
+
+## 🧪 Testing Your API
+
+### Using curl
 
 ```bash
 # Health check
 curl http://localhost:8000/health
 
 # Analyze a scam message
-curl -X POST http://localhost:8000/analyze ^
-  -H "x-api-key: your-api-key" ^
-  -H "Content-Type: application/json" ^
-  -d "{\"sessionId\": \"test-123\", \"message\": {\"sender\": \"scammer\", \"text\": \"Your account is blocked! Send OTP to +919876543210\", \"timestamp\": \"\"}, \"conversationHistory\": [], \"metadata\": {\"channel\": \"sms\"}}"
+curl -X POST http://localhost:8000/analyze \
+  -H "Content-Type: application/json" \
+  -H "x-api-key: your-secret-key-123" \
+  -d '{
+    "sessionId": "test-session-1",
+    "message": {
+      "sender": "scammer",
+      "text": "Your account will be blocked. Verify at bit.ly/fake",
+      "timestamp": "2026-01-27T10:00:00Z"
+    },
+    "conversationHistory": [],
+    "metadata": {
+      "channel": "SMS",
+      "language": "English",
+      "locale": "IN"
+    }
+  }'
 ```
 
-## 📁 Project Structure
+### Using Python requests
 
-```
-honeypot-agent/
-├── agents/                      # AI Agent modules
-│   ├── detector_agent.py        # Scam classification with Gemini
-│   ├── actor_agent.py           # Persona-based response generation
-│   ├── investigator_agent.py    # Intelligence extraction
-│   ├── session_manager.py       # Conversation state tracking
-│   ├── orchestrator.py          # Multi-agent coordinator
-│   └── prompts.py               # AI prompt templates
-│
-├── api/                         # FastAPI server
-│   ├── main.py                  # Server and endpoints
-│   ├── models.py                # Pydantic models
-│   ├── auth.py                  # API key validation
-│   └── callback.py              # GUVI callback handler
-│
-├── intelligence/                # Intelligence extraction
-│   ├── extractors.py            # Regex pattern matching
-│   ├── validators.py            # Data validation
-│   └── scam_database.json       # 50 test messages
-│
-├── tests/                       # Test suite
-│   ├── test_extractors.py       # Extraction tests
-│   ├── test_agents.py           # Agent tests
-│   ├── test_api.py              # API tests
-│   └── manual_test.py           # Quick testing script
-│
-├── config.py                    # Configuration management
-├── requirements.txt             # Dependencies
-├── .env.example                 # Environment template
-└── README.md                    # This file
+```python
+import requests
+
+response = requests.post(
+    "http://localhost:8000/analyze",
+    headers={
+        "Content-Type": "application/json",
+        "x-api-key": "your-secret-key-123"
+    },
+    json={
+        "sessionId": "test-1",
+        "message": {
+            "sender": "scammer",
+            "text": "Send money to 9876543210",
+            "timestamp": "2026-01-27T10:00:00Z"
+        },
+        "conversationHistory": [],
+        "metadata": {"channel": "SMS", "language": "English", "locale": "IN"}
+    }
+)
+
+print(response.json())
 ```
 
-## 🔧 Configuration
+---
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `GEMINI_API_KEY` | Google Gemini API key | Required |
-| `API_SECRET_KEY` | API authentication key | Required |
-| `GUVI_CALLBACK_ENABLED` | Enable GUVI callbacks | `false` |
-| `MAX_CONVERSATION_TURNS` | Max turns before ending | `20` |
-| `MIN_INTELLIGENCE_THRESHOLD` | Intel types to collect | `2` |
-| `SCAM_CONFIDENCE_THRESHOLD` | Min confidence for scam | `0.7` |
+## 🚀 Deployment (Railway)
 
-## 📡 API Endpoints
+### Deployment Prerequisites
 
-### `GET /health`
-Health check endpoint (no auth required).
+- GitHub account
+- Railway account (sign up at railway.app)
 
-### `POST /analyze`
-Main scam analysis endpoint.
+### Steps
 
-**Request:**
-```json
-{
-  "sessionId": "unique-session-id",
-  "message": {
-    "sender": "scammer",
-    "text": "Your account is blocked! Send OTP now.",
-    "timestamp": "2026-01-31T10:00:00Z"
-  },
-  "conversationHistory": [],
-  "metadata": {
-    "channel": "sms",
-    "language": "en"
-  }
-}
-```
+1. Push your code to GitHub
+2. Go to railway.app and login with GitHub
+3. Click "New Project" → "Deploy from GitHub repo"
+4. Select your repository
+5. Add environment variables in Railway dashboard:
+   - `GEMINI_API_KEY`
+   - `API_SECRET_KEY`
+   - `ENVIRONMENT=production`
+6. Railway automatically deploys!
 
-**Response:**
-```json
-{
-  "status": "success",
-  "scamDetected": true,
-  "agentResponse": "Oh my! What should I do? I'm so worried!",
-  "extractedIntelligence": {
-    "bankAccounts": [],
-    "upiIds": ["scammer@paytm"],
-    "phishingLinks": [],
-    "phoneNumbers": ["+919876543210"],
-    "suspiciousKeywords": ["blocked", "otp", "urgent"]
-  },
-  "engagementMetrics": {
-    "conversationTurn": 1,
-    "responseTimeMs": 1542,
-    "totalIntelligenceItems": 5
-  },
-  "continueConversation": true,
-  "agentNotes": "Detection: Clear scam indicators..."
-}
-```
+Your API will be available at: `https://your-app.railway.app`
 
-### `GET /session/{session_id}`
-Get session details (requires auth).
+---
 
-### `DELETE /session/{session_id}`
-End session manually and trigger callback.
+## 📚 Documentation
 
-## 🎭 Personas
+- **API Reference:** <http://localhost:8000/docs> (when server running)
+- **Gemini API Docs:** <https://ai.google.dev/docs>
+- **FastAPI Docs:** <https://fastapi.tiangolo.com>
+- **Pytest Docs:** <https://docs.pytest.org>
 
-The Actor Agent uses three distinct personas:
+---
 
-1. **Elderly (65+)**: Confused, trusting, uses simple language
-2. **Professional (30-50)**: Busy, impatient, wants quick solutions
-3. **Novice (18-30)**: Tech-confused, nervous, casual language
+## 🐛 Troubleshooting
 
-## 📊 Intelligence Extraction
-
-Extracts and validates:
-- **Bank Accounts**: 9-18 digit numbers with validation
-- **UPI IDs**: Known Indian UPI providers
-- **Phone Numbers**: Indian format (+91)
-- **Phishing Links**: URLs and shortened links
-- **Suspicious Keywords**: 50+ scam indicators
-
-## 🧪 Testing
+### "Module not found" error
 
 ```bash
-# Unit tests (no API key needed)
-pytest tests/test_extractors.py tests/test_agents.py -v
+# Make sure virtual environment is activated
+# You should see (venv) in your terminal prompt
 
-# API tests
-pytest tests/test_api.py -v
-
-# Manual testing
-python tests/manual_test.py extractors
-python tests/manual_test.py detector  # Needs API key
-python tests/manual_test.py all       # Needs API key
+# Reinstall dependencies
+pip install -r requirements.txt
 ```
 
-## 📝 License
+### "Port already in use" error
 
-MIT License - Built for GUVI x HCL India AI Impact Buildathon
+```bash
+# Kill process using port 8000
+# Mac/Linux:
+lsof -ti:8000 | xargs kill -9
+# Windows:
+netstat -ano | findstr :8000
+# Then kill that process ID in Task Manager
+
+# Or use different port
+uvicorn api.main:app --port 8001
+```
+
+### "API key not found" error
+
+```bash
+# Check .env file exists
+ls -la .env
+
+# Check .env has your key
+cat .env  # Mac/Linux
+type .env  # Windows
+
+# Make sure no spaces around = sign
+# Correct: GEMINI_API_KEY=AIza...
+# Wrong: GEMINI_API_KEY = AIza...
+```
+
+### Gemini API rate limit error
+
+```bash
+# Free tier limits: 60 requests/minute
+# If exceeded, wait 1 minute or:
+# - Use caching for common requests
+# - Add delays between requests
+# - Switch to Groq as backup provider
+```
+
+---
+
+## 📞 Getting Help
+
+### During Development
+
+- Use Gemini CLI: `gemini "your question here"`
+- Check error messages carefully
+- Search error text in Google
+- Ask team members in group chat
+
+### Resources
+
+- Team guides in `/docs` folder
+- Gemini CLI guide for your role
+- FastAPI interactive docs at `/docs`
+- GitHub Issues for bugs
+
+---
+
+## 🎯 Daily Workflow
+
+```bash
+# 1. Start your day
+git pull origin main  # Get latest changes
+source venv/bin/activate  # Activate environment
+
+# 2. Create/switch to your branch
+git checkout -b your-name/feature-name
+
+# 3. Code and test
+# ... make your changes ...
+pytest  # Test your code
+
+# 4. Commit your work
+git add .
+git commit -m "Describe what you built"
+git push origin your-name/feature-name
+
+# 5. End of day
+deactivate  # Deactivate virtual environment
+```
+
+---
+
+## 📅 Project Timeline
+
+- **Jan 27-29:** Individual components working
+- **Jan 30-31:** Integration and testing
+- **Feb 1-3:** Multi-turn conversations + callback
+- **Feb 4:** Deployment and final testing
+- **Feb 5:** Submission deadline
+
+---
+
+## 🏆 Success Criteria
+
+- ✅ 90%+ scam detection accuracy
+- ✅ API response time < 5 seconds
+- ✅ 70%+ intelligence extraction rate
+- ✅ Handles 100+ requests without crash
+- ✅ Successfully deploys to cloud
+
+---
+
+## 📄 License
+
+This project is for educational purposes (GUVI Hackathon 2026).
+
+---
+
+**Questions? Check the docs/ folder or ask in team chat!**
+**Let's win this! 🚀**
