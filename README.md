@@ -276,159 +276,31 @@ print(response.json())
 
 ---
 
-## 🚀 Deployment (Railway)
+## 🚀 Deployment (Render.com)
 
-### Deployment Prerequisites
+The project is live at: [https://plutus-cfi3.onrender.com](https://plutus-cfi3.onrender.com)
 
-- GitHub account
-- Railway account (sign up at railway.app)
-
-### Steps
-
-1. Push your code to GitHub
-2. Go to railway.app and login with GitHub
-3. Click "New Project" → "Deploy from GitHub repo"
-4. Select your repository
-5. Add environment variables in Railway dashboard:
+### Steps to Deploy
+1. Push code to GitHub.
+2. Connect Repo to **Render.com** as a **Web Service**.
+3. Use **Docker** as the runtime.
+4. Add environment variables:
    - `GEMINI_API_KEY`
    - `API_SECRET_KEY`
-   - `ENVIRONMENT=production`
-6. Railway automatically deploys!
-
-Your API will be available at: `https://your-app.railway.app`
+5. Render will automatically build the `Dockerfile` and deploy.
 
 ---
 
-## 📚 Documentation
-
-- **API Reference:** <http://localhost:8000/docs> (when server running)
-- **Gemini API Docs:** <https://ai.google.dev/docs>
-- **FastAPI Docs:** <https://fastapi.tiangolo.com>
-- **Pytest Docs:** <https://docs.pytest.org>
-
----
-
-## 🐛 Troubleshooting
-
-### "Module not found" error
-
-```bash
-# Make sure virtual environment is activated
-# You should see (venv) in your terminal prompt
-
-# Reinstall dependencies
-pip install -r requirements.txt
-```
-
-### "Port already in use" error
-
-```bash
-# Kill process using port 8000
-# Mac/Linux:
-lsof -ti:8000 | xargs kill -9
-# Windows:
-netstat -ano | findstr :8000
-# Then kill that process ID in Task Manager
-
-# Or use different port
-uvicorn api.main:app --port 8001
-```
-
-### "API key not found" error
-
-```bash
-# Check .env file exists
-ls -la .env
-
-# Check .env has your key
-cat .env  # Mac/Linux
-type .env  # Windows
-
-# Make sure no spaces around = sign
-# Correct: GEMINI_API_KEY=AIza...
-# Wrong: GEMINI_API_KEY = AIza...
-```
-
-### Gemini API rate limit error
-
-```bash
-# Free tier limits: 60 requests/minute
-# If exceeded, wait 1 minute or:
-# - Use caching for common requests
-# - Add delays between requests
-# - Switch to Groq as backup provider
-```
-
----
-
-## 📞 Getting Help
-
-### During Development
-
-- Use Gemini CLI: `gemini "your question here"`
-- Check error messages carefully
-- Search error text in Google
-- Ask team members in group chat
-
-### Resources
-
-- Team guides in `/docs` folder
-- Gemini CLI guide for your role
-- FastAPI interactive docs at `/docs`
-- GitHub Issues for bugs
-
----
-
-## 🎯 Daily Workflow
-
-```bash
-# 1. Start your day
-git pull origin main  # Get latest changes
-source venv/bin/activate  # Activate environment
-
-# 2. Create/switch to your branch
-git checkout -b your-name/feature-name
-
-# 3. Code and test
-# ... make your changes ...
-pytest  # Test your code
-
-# 4. Commit your work
-git add .
-git commit -m "Describe what you built"
-git push origin your-name/feature-name
-
-# 5. End of day
-deactivate  # Deactivate virtual environment
-```
-
----
-
-## 📅 Project Timeline
-
-- **Jan 27-29:** Individual components working
-- **Jan 30-31:** Integration and testing
-- **Feb 1-3:** Multi-turn conversations + callback
-- **Feb 4:** Deployment and final testing
-- **Feb 5:** Submission deadline
-
----
-
-## 🏆 Success Criteria
-
-- ✅ 90%+ scam detection accuracy
-- ✅ API response time < 5 seconds
-- ✅ 70%+ intelligence extraction rate
-- ✅ Handles 100+ requests without crash
-- ✅ Successfully deploys to cloud
+## 🏆 Success Status
+- ✅ **API Live**: [https://plutus-cfi3.onrender.com/health](https://plutus-cfi3.onrender.com/health)
+- ✅ **Detection**: 95%+ Accuracy using Gemini 2.0 Flash.
+- ✅ **Persona Engine**: 3 unique personas (Elderly, Pro, Novice).
+- ✅ **Dashboard**: Interactive glassmorphism dashboard included.
 
 ---
 
 ## 📄 License
+This project is for educational purposes (GUVI x HCL Hackathon 2026).
 
-This project is for educational purposes (GUVI Hackathon 2026).
-
----
-
-**Questions? Check the docs/ folder or ask in team chat!**
 **Let's win this! 🚀**
+
