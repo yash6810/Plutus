@@ -145,6 +145,22 @@ async def root():
     )
 
 
+@app.post("/", response_model=ApiResponse)
+async def root_analyze(
+    data: IncomingMessage,
+    background_tasks: BackgroundTasks,
+    x_api_key: str = Header(..., alias="x-api-key")
+):
+    """
+    Root POST endpoint - redirects to /analyze for GUVI tester compatibility.
+    
+    The official GUVI evaluation tester may POST to the root URL.
+    This endpoint provides the same functionality as /analyze.
+    """
+    # Forward to the analyze endpoint logic
+    return await analyze_scam_message(data, background_tasks, x_api_key)
+
+
 @app.get("/tester")
 async def serve_tester():
     """Serve the Honeypot API Endpoint Tester page."""
