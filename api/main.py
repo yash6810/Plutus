@@ -230,27 +230,32 @@ async def analyze_scam_message(
             detail="Service unavailable. Check GEMINI_API_KEY configuration."
         )
     
+    # Use helper methods for flexible input handling
+    session_id = data.get_session_id()
+    message = data.get_normalized_message()
+    message_text = data.get_message_text()
+    
     # Log incoming request
-    logger.info(f"Analyze request: session={data.sessionId}, message_len={len(data.message.get('text', ''))}")
+    logger.info(f"Analyze request: session={session_id}, message_len={len(message_text)}")
     
     try:
         # Process message through orchestrator
         result = orchestrator.process_message(
-            session_id=data.sessionId,
-            message=data.message,
+            session_id=session_id,
+            message=message,
             history=data.conversationHistory,
             metadata=data.metadata
         )
         
         # If conversation ended, trigger callback in background
         if not result.get("continueConversation", True):
-            session_summary = orchestrator.get_session_summary(data.sessionId)
+            session_summary = orchestrator.get_session_summary(session_id)
             background_tasks.add_task(
                 trigger_callback,
-                data.sessionId,
+                session_id,
                 session_summary
             )
-            logger.info(f"Conversation ended for session {data.sessionId}, callback scheduled")
+            logger.info(f"Conversation ended for session {session_id}, callback scheduled")
         
         # Return response
         return ApiResponse(

@@ -32,11 +32,18 @@ class IncomingMessage(BaseModel):
     """
     Request model for the /analyze endpoint.
     
-    Matches the expected format from GUVI evaluation system.
+    Flexible model that accepts various input formats from GUVI evaluation system.
+    All fields are optional to support different tester formats.
     """
     
-    sessionId: str = Field(..., description="Unique session identifier")
-    message: Dict[str, Any] = Field(..., description="Message object with sender, text, timestamp")
+    # Primary fields - made optional for flexibility
+    sessionId: Optional[str] = Field(None, description="Unique session identifier")
+    message: Optional[Dict[str, Any]] = Field(None, description="Message object with sender, text, timestamp")
+    
+    # Alternative simple format - just the text
+    text: Optional[str] = Field(None, description="Direct message text (alternative format)")
+    
+    # Conversation context
     conversationHistory: List[Dict[str, Any]] = Field(
         default_factory=list,
         description="List of previous messages in the conversation"
@@ -45,6 +52,43 @@ class IncomingMessage(BaseModel):
         default_factory=dict,
         description="Channel, language, and locale information"
     )
+    
+    def get_message_text(self) -> str:
+        """Extract message text from various input formats."""
+        # Try message.text first
+        if self.message and isinstance(self.message, dict):
+            if "text" in self.message:
+                return self.message.get("text", "")
+            if "content" in self.message:
+                return self.message.get("content", "")
+        # Try direct text field
+        if self.text:
+            return self.text
+        # Fallback: convert message to string if it's a string
+        if self.message and isinstance(self.message, str):
+            return self.message
+        return ""
+    
+    def get_session_id(self) -> str:
+        """Get session ID, generating one if not provided."""
+        import uuid
+        return self.sessionId or f"auto-{uuid.uuid4().hex[:12]}"
+    
+    def get_normalized_message(self) -> Dict[str, Any]:
+        """Get normalized message dict."""
+        from datetime import datetime
+        text = self.get_message_text()
+        if self.message and isinstance(self.message, dict):
+            return {
+                "sender": self.message.get("sender", "unknown"),
+                "text": text,
+                "timestamp": self.message.get("timestamp", datetime.now().isoformat())
+            }
+        return {
+            "sender": "unknown",
+            "text": text,
+            "timestamp": datetime.now().isoformat()
+        }
     
     class Config:
         json_schema_extra = {
