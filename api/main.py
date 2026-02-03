@@ -13,7 +13,8 @@ from typing import Optional
 
 from fastapi import FastAPI, Header, HTTPException, Request, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
+from pydantic import BaseModel
 
 # Add parent directory to path for imports
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -142,6 +143,20 @@ async def root():
         timestamp=datetime.now().isoformat(),
         version="1.0.0"
     )
+
+
+@app.get("/tester")
+async def serve_tester():
+    """Serve the Honeypot API Endpoint Tester page."""
+    tester_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "tester.html")
+    return FileResponse(tester_path, media_type="text/html")
+
+
+@app.get("/dashboard")
+async def serve_dashboard():
+    """Serve the Plutus Dashboard page."""
+    dashboard_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "dashboard.html")
+    return FileResponse(dashboard_path, media_type="text/html")
 
 
 @app.get("/health", response_model=HealthResponse)
@@ -314,6 +329,141 @@ async def end_session(
         "message": f"Session {session_id} ended",
         "summary": summary
     }
+
+
+# =============================================================================
+# Honeypot Tester Endpoint
+# =============================================================================
+
+class HoneypotTestRequest(BaseModel):
+    """Request model for honeypot testing."""
+    url: str
+    api_key: str
+
+
+@app.post("/api/test-honeypot")
+async def test_honeypot_endpoint(data: HoneypotTestRequest):
+    """
+    Test an external honeypot API endpoint.
+    
+    This endpoint proxies a test request to validate:
+    - API authentication
+    - Endpoint availability
+    - Response structure
+    - Basic honeypot behavior
+    """
+    import httpx
+    import time
+    
+    results = {
+        "url": data.url,
+        "timestamp": datetime.now().isoformat(),
+        "tests": {
+            "connectivity": {"passed": False, "message": ""},
+            "authentication": {"passed": False, "message": ""},
+            "response_structure": {"passed": False, "message": ""},
+            "honeypot_behavior": {"passed": False, "message": ""}
+        },
+        "response_time_ms": 0,
+        "raw_response": None,
+        "overall_status": "failed"
+    }
+    
+    # Sample test message
+    test_payload = {
+        "sessionId": f"tester-{int(time.time())}",
+        "message": {
+            "sender": "scammer",
+            "text": "URGENT: Your bank account has been compromised! Send OTP now to verify.",
+            "timestamp": datetime.now().isoformat()
+        },
+        "conversationHistory": [],
+        "metadata": {
+            "channel": "sms",
+            "language": "en",
+            "locale": "en-IN"
+        }
+    }
+    
+    try:
+        start_time = time.time()
+        
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            # Test the /analyze endpoint
+            analyze_url = data.url.rstrip('/') + '/analyze'
+            
+            response = await client.post(
+                analyze_url,
+                json=test_payload,
+                headers={"x-api-key": data.api_key, "Content-Type": "application/json"}
+            )
+            
+            end_time = time.time()
+            results["response_time_ms"] = int((end_time - start_time) * 1000)
+            
+            # Test 1: Connectivity
+            results["tests"]["connectivity"]["passed"] = True
+            results["tests"]["connectivity"]["message"] = f"Successfully connected (HTTP {response.status_code})"
+            
+            # Test 2: Authentication
+            if response.status_code == 401 or response.status_code == 403:
+                results["tests"]["authentication"]["passed"] = False
+                results["tests"]["authentication"]["message"] = "Authentication failed - check your API key"
+            elif response.status_code >= 200 and response.status_code < 300:
+                results["tests"]["authentication"]["passed"] = True
+                results["tests"]["authentication"]["message"] = "API key accepted"
+            else:
+                results["tests"]["authentication"]["passed"] = False
+                results["tests"]["authentication"]["message"] = f"Unexpected status code: {response.status_code}"
+            
+            # Parse response
+            try:
+                response_data = response.json()
+                results["raw_response"] = response_data
+                
+                # Test 3: Response Structure
+                required_fields = ["status", "scamDetected", "agentResponse", "extractedIntelligence", "continueConversation"]
+                missing_fields = [f for f in required_fields if f not in response_data]
+                
+                if not missing_fields:
+                    results["tests"]["response_structure"]["passed"] = True
+                    results["tests"]["response_structure"]["message"] = "Response contains all required fields"
+                else:
+                    results["tests"]["response_structure"]["passed"] = False
+                    results["tests"]["response_structure"]["message"] = f"Missing fields: {', '.join(missing_fields)}"
+                
+                # Test 4: Honeypot Behavior
+                if response_data.get("scamDetected") == True and response_data.get("agentResponse"):
+                    results["tests"]["honeypot_behavior"]["passed"] = True
+                    results["tests"]["honeypot_behavior"]["message"] = "Scam detected and response generated"
+                elif response_data.get("status") == "success":
+                    results["tests"]["honeypot_behavior"]["passed"] = True
+                    results["tests"]["honeypot_behavior"]["message"] = "Honeypot responded successfully"
+                else:
+                    results["tests"]["honeypot_behavior"]["passed"] = False
+                    results["tests"]["honeypot_behavior"]["message"] = "Unexpected honeypot behavior"
+                    
+            except Exception as json_err:
+                results["tests"]["response_structure"]["message"] = f"Failed to parse JSON: {str(json_err)}"
+                results["raw_response"] = response.text[:500]
+        
+        # Calculate overall status
+        passed_tests = sum(1 for t in results["tests"].values() if t["passed"])
+        if passed_tests == 4:
+            results["overall_status"] = "passed"
+        elif passed_tests >= 2:
+            results["overall_status"] = "partial"
+        else:
+            results["overall_status"] = "failed"
+            
+    except httpx.ConnectError:
+        results["tests"]["connectivity"]["message"] = "Failed to connect - check URL and server status"
+    except httpx.TimeoutException:
+        results["tests"]["connectivity"]["message"] = "Connection timed out (30s limit)"
+    except Exception as e:
+        results["tests"]["connectivity"]["message"] = f"Error: {str(e)}"
+    
+    return results
 
 
 # =============================================================================
