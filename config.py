@@ -42,7 +42,7 @@ class Config:
     MAX_CONVERSATION_TURNS: int = int(os.getenv("MAX_CONVERSATION_TURNS", "20"))
     MIN_INTELLIGENCE_THRESHOLD: int = int(os.getenv("MIN_INTELLIGENCE_THRESHOLD", "2"))
     STALE_CONVERSATION_THRESHOLD: int = int(os.getenv("STALE_CONVERSATION_THRESHOLD", "5"))
-    SCAM_CONFIDENCE_THRESHOLD: float = float(os.getenv("SCAM_CONFIDENCE_THRESHOLD", "0.7"))
+    SCAM_CONFIDENCE_THRESHOLD: float = float(os.getenv("SCAM_CONFIDENCE_THRESHOLD", "0.3"))
     
     # ===========================================
     # PERFORMANCE

@@ -181,12 +181,16 @@ class DetectorAgent:
         }
     
     def _default_response(self) -> Dict[str, Any]:
-        """Return default response when detection fails."""
+        """Return default response when detection fails.
+        
+        For a honeypot, we default to treating messages as potential scams
+        to ensure engagement even when AI detection fails.
+        """
         return {
-            "is_scam": False,
+            "is_scam": True,  # Assume scam to ensure engagement
             "confidence": 0.5,
-            "reason": "Unable to analyze message",
-            "indicators": [],
+            "reason": "Treating as potential scam for engagement",
+            "indicators": ["detection_fallback"],
         }
     
     def get_quick_classification(self, message: str) -> bool:

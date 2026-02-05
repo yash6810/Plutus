@@ -266,7 +266,7 @@ def create_orchestrator(
     max_turns: int = 20,
     min_intelligence_types: int = 2,
     stale_threshold: int = 5,
-    scam_confidence_threshold: float = 0.7
+    scam_confidence_threshold: float = 0.3
 ) -> Orchestrator:
     """
     Factory function to create a fully configured Orchestrator.
