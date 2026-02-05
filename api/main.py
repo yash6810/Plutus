@@ -261,11 +261,20 @@ async def analyze_scam_message(
         # Full intelligence is sent via callback when conversation ends
         agent_reply = result.get("agentResponse", "")
         
-        # If no agent response yet (first detection), generate a default curious response
-        if not agent_reply and result.get("scamDetected", False):
-            agent_reply = "Why is my account being suspended?"
-        elif not agent_reply:
-            agent_reply = "I don't understand. Can you explain?"
+        # If no agent response yet, generate an engaging fallback response
+        # These should sound like a curious/worried potential victim
+        if not agent_reply:
+            import random
+            fallback_responses = [
+                "Oh no! What's happening with my account?",
+                "Why is my account being suspended?",
+                "Is this really from the bank? What should I do?",
+                "This is worrying me! Can you explain more?",
+                "I received your message. What do I need to do?",
+                "Please help me understand what's going on.",
+                "I don't want my account blocked! What do I do?",
+            ]
+            agent_reply = random.choice(fallback_responses)
         
         return {"status": "success", "reply": agent_reply}
         
