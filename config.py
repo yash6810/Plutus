@@ -30,7 +30,7 @@ class Config:
     # ===========================================
     # GUVI INTEGRATION
     # ===========================================
-    GUVI_CALLBACK_ENABLED: bool = os.getenv("GUVI_CALLBACK_ENABLED", "false").lower() == "true"
+    GUVI_CALLBACK_ENABLED: bool = os.getenv("GUVI_CALLBACK_ENABLED", "true").lower() == "true"
     GUVI_CALLBACK_URL: str = os.getenv(
         "GUVI_CALLBACK_URL", 
         "https://hackathon.guvi.in/api/updateHoneyPotFinalResult"

@@ -145,7 +145,7 @@ async def root():
     )
 
 
-@app.post("/", response_model=ApiResponse)
+@app.post("/")
 async def root_analyze(
     data: IncomingMessage,
     background_tasks: BackgroundTasks,
@@ -195,7 +195,7 @@ async def health_check():
     )
 
 
-@app.post("/analyze", response_model=ApiResponse)
+@app.post("/analyze")
 async def analyze_scam_message(
     data: IncomingMessage,
     background_tasks: BackgroundTasks,
@@ -257,26 +257,17 @@ async def analyze_scam_message(
             )
             logger.info(f"Conversation ended for session {session_id}, callback scheduled")
         
-        # Return response
-        return ApiResponse(
-            status=result.get("status", "success"),
-            scamDetected=result.get("scamDetected", False),
-            agentResponse=result.get("agentResponse", ""),
-            extractedIntelligence=result.get("extractedIntelligence", {
-                "bankAccounts": [],
-                "upiIds": [],
-                "phishingLinks": [],
-                "phoneNumbers": [],
-                "suspiciousKeywords": []
-            }),
-            engagementMetrics=result.get("engagementMetrics", {
-                "conversationTurn": 0,
-                "responseTimeMs": 0,
-                "totalIntelligenceItems": 0
-            }),
-            continueConversation=result.get("continueConversation", True),
-            agentNotes=result.get("agentNotes", "")
-        )
+        # Return GUVI-compliant simple response format
+        # Full intelligence is sent via callback when conversation ends
+        agent_reply = result.get("agentResponse", "")
+        
+        # If no agent response yet (first detection), generate a default curious response
+        if not agent_reply and result.get("scamDetected", False):
+            agent_reply = "Why is my account being suspended?"
+        elif not agent_reply:
+            agent_reply = "I don't understand. Can you explain?"
+        
+        return {"status": "success", "reply": agent_reply}
         
     except Exception as e:
         logger.error(f"Error processing message: {str(e)}", exc_info=True)
